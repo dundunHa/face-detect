@@ -5,6 +5,7 @@ use std::sync::mpsc;
 use std::thread;
 use std::path::Path;
 use std::fs;
+use std::env;
 use rustface::{Detector, ImageData};
 use base64::{Engine as _, engine::general_purpose};
 use serde::{Serialize, Deserialize};
@@ -227,6 +228,11 @@ fn handle_client(mut stream: UnixStream, detector: &mut Box<dyn Detector>) {
 }
 
 fn main() {
+
+    let max_workers = env::var("FACE_DETECT_MAX_WORK")
+        .ok()
+        .and_then(|val| val.parse::<usize>().ok())
+        .unwrap_or(MAX_WORKERS);
     // 如果socket文件已存在，先删除
     if Path::new(SOCKET_PATH).exists() {
         fs::remove_file(SOCKET_PATH).unwrap_or_else(|e| {
@@ -236,7 +242,7 @@ fn main() {
     }
 
     // 创建线程池
-    let pool = ThreadPool::new(MAX_WORKERS);
+    let pool = ThreadPool::new(max_workers);
 
     // 创建 Unix Domain Socket 监听器
     let listener = UnixListener::bind(SOCKET_PATH).unwrap_or_else(|e| {
