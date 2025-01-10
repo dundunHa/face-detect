@@ -1,0 +1,30 @@
+[package]
+name = "face-detect"
+version = "0.1.0"
+edition = "2021"
+
+
+[dependencies]
+num = "0.3"
+byteorder = "1.4"
+rayon = { version = "1.4.1", optional = true }
+rustface = "0.1.7"
+image = "0.23"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+base64 = "0.21"
+
+[dev-dependencies]
+imageproc = "0.22.0"
+criterion = "0.3"
+
+# [lib]
+# bench = false # workaround for "Unrecognized option: 'save-baseline'"
+
+
+
+[profile.release]
+lto = true
+
+[features]
+default = ["rayon"]
