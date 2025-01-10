@@ -20,6 +20,7 @@ struct ThreadPool {
 }
 
 struct Worker {
+    #[allow(dead_code)]
     id: usize,
     thread: Option<thread::JoinHandle<()>>,
 }
@@ -128,7 +129,9 @@ struct Request {
 // 响应消息格式
 #[derive(Serialize)]
 struct Response {
+    #[allow(dead_code)]
     face_count: usize,
+    #[allow(dead_code)]
     detect_time_ms: u64,
 }
 
@@ -214,7 +217,9 @@ fn handle_client(mut stream: UnixStream, detector: &mut Box<dyn Detector>) {
                 }
             }
             Err(e) => {
-                eprintln!("Failed to read header: {}", e);
+                if e.kind() != std::io::ErrorKind::UnexpectedEof {
+                    eprintln!("Failed to read header: {}", e);
+                }
                 break;
             }
         }

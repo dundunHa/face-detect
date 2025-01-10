@@ -14,7 +14,9 @@ struct Request {
 
 #[derive(Deserialize, Debug)]
 struct Response {
+    #[allow(dead_code)]
     face_count: usize,
+    #[allow(dead_code)]
     detect_time_ms: u64,
 }
 

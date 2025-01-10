@@ -23,25 +23,27 @@ jobs:
     strategy:
       matrix:
         include:
+          # Linux x86_64 构建
           - target: x86_64-unknown-linux-gnu
             os: ubuntu-latest
           
+          # Linux ARM64 构建
           - target: aarch64-unknown-linux-gnu
             os: ubuntu-latest
             cross: true
            
+          # Linux ARM v7 构建
           - target: armv7-unknown-linux-gnueabihf
             os: ubuntu-latest
             cross: true
             
+          # macOS Intel 构建
           - target: x86_64-apple-darwin
             os: macos-latest
             
+          # macOS ARM 构建
           - target: aarch64-apple-darwin
             os: macos-latest
-            
-          - target: x86_64-pc-windows-gnu
-            os: windows-latest
             
     runs-on: ${{ matrix.os }}
 
@@ -85,11 +87,7 @@ jobs:
         fi
         
         cd releases
-        if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
-          7z a "$BINARY_NAME-${{ matrix.target }}.zip" "$BINARY_NAME-${{ matrix.target }}$BINARY_SUFFIX"
-        else
-          tar czf "$BINARY_NAME-${{ matrix.target }}.tar.gz" "$BINARY_NAME-${{ matrix.target }}$BINARY_SUFFIX"
-        fi
+        tar czf "$BINARY_NAME-${{ matrix.target }}.tar.gz" "$BINARY_NAME-${{ matrix.target }}$BINARY_SUFFIX"
     
     - name: Upload artifacts
       uses: actions/upload-artifact@v3
@@ -109,7 +107,7 @@ jobs:
     name: Run Tests
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ubuntu-latest, macos-latest]
     
     runs-on: ${{ matrix.os }}
     
