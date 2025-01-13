@@ -79,10 +79,12 @@ impl Worker {
     fn new(id: usize, receiver: std::sync::Arc<std::sync::Mutex<mpsc::Receiver<Message>>>) -> Worker {
         let thread = thread::spawn(move || {
             // 每个worker创建自己的detector实例
-            let model_path = std::env::current_dir()
-                .unwrap()
-                .join("model")
-                .join("seeta_fd_frontal_v1.0.bin");
+            let model_path = env::var("FACE_DETECT_MODEL_PATH").map(|p| Path::new(&p).to_path_buf()).unwrap_or_else(|_| {
+                std::env::current_dir()
+                    .unwrap()
+                    .join("model")
+                    .join("seeta_fd_frontal_v1.0.bin")
+            });
             let mut detector = match rustface::create_detector(model_path.to_str().unwrap()) {
                 Ok(detector) => {
                     let mut d = detector;
